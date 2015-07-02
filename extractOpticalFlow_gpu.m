@@ -1,13 +1,6 @@
 
 function [] = extractOpticalFlow_gpu(index, device_id, type)
-% path1 = '/nfs/lmwang/lmwang/Data/UCF101/ucf101_org/';
-% if type ==0
-%     path2 = '/media/sdb/lmwang/data/UCF101/ucf101_flow_img_farn_gpu_step_2/';
-% elseif type ==1
-%     path2 = '/media/sdb/lmwang/data/UCF101/ucf101_flow_img_tvl1_gpu_step_2/';
-% else
-%     path2 = '/media/sdb/lmwang/data/UCF101/ucf101_flow_img_brox_gpu_step_2/';
-% end
+
 
 
 path1 = '/nfs/lmwang/lmwang/Data/HMDB51/hmdb51_org/';
