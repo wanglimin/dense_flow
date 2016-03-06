@@ -2,14 +2,16 @@
 // Created by yjxiong on 11/18/15.
 //
 #include "common.h"
-#include "opencv2/gpu/gpu.hpp"
-using namespace cv::gpu;
+#include "opencv2/cudaarithm.hpp"
+#include "opencv2/cudaoptflow.hpp"
+#include "opencv2/cudacodec.hpp"
+using namespace cv::cuda;
 
 
-void calcDenseFlowGPU(string file_name, int bound, int type, int step, int dev_id,
-                      vector<vector<uchar> >& output_x,
-                      vector<vector<uchar> >& output_y,
-                      vector<vector<uchar> >& output_img){
+void calcDenseFlowGPU(std::string file_name, int bound, int type, int step, int dev_id,
+                      std::vector<std::vector<uchar> >& output_x,
+                      std::vector<std::vector<uchar> >& output_y,
+                      std::vector<std::vector<uchar> >& output_img){
     VideoCapture video_stream(file_name);
     CHECK(video_stream.isOpened())<<"Cannot open video stream \""
                                   <<file_name
@@ -20,11 +22,12 @@ void calcDenseFlowGPU(string file_name, int bound, int type, int step, int dev_i
     Mat flow_x, flow_y;
 
     GpuMat d_frame_0, d_frame_1;
-    GpuMat d_flow_x, d_flow_y;
+    //GpuMat d_flow_x, d_flow_y;
+    GpuMat d_flow;
 
-    FarnebackOpticalFlow alg_farn;
-    OpticalFlowDual_TVL1_GPU alg_tvl1;
-    BroxOpticalFlow alg_brox(0.197f, 50.0f, 0.8f, 10, 77, 10);
+    cv::Ptr<cuda::FarnebackOpticalFlow> alg_farn = cuda::FarnebackOpticalFlow::create();
+    cv::Ptr<cuda::OpticalFlowDual_TVL1> alg_tvl1 = cuda::OpticalFlowDual_TVL1::create();
+    cv::Ptr<cuda::BroxOpticalFlow> alg_brox      = cuda::BroxOpticalFlow::create(0.197f, 50.0f, 0.8f, 10, 77, 10);
 
     bool initialized = false;
     int cnt = 0;
@@ -41,7 +44,7 @@ void calcDenseFlowGPU(string file_name, int bound, int type, int step, int dev_i
             initialized = true;
             for(int s = 0; s < step; ++s){
                 video_stream >> capture_frame;
-		cnt ++;
+        cnt ++;
                 if (capture_frame.empty()) return; // read frames until end
             }
         }else {
@@ -52,18 +55,18 @@ void calcDenseFlowGPU(string file_name, int bound, int type, int step, int dev_i
 
             switch(type){
                 case 0: {
-                    alg_farn(d_frame_0, d_frame_1, d_flow_x, d_flow_y);
+                    alg_farn->calc(d_frame_0, d_frame_1, d_flow);
                     break;
                 }
                 case 1: {
-                    alg_tvl1(d_frame_0, d_frame_1, d_flow_x, d_flow_y);
+                    alg_tvl1->calc(d_frame_0, d_frame_1, d_flow);
                     break;
                 }
                 case 2: {
                     GpuMat d_buf_0, d_buf_1;
                     d_frame_0.convertTo(d_buf_0, CV_32F, 1.0 / 255.0);
                     d_frame_1.convertTo(d_buf_1, CV_32F, 1.0 / 255.0);
-                    alg_brox(d_buf_0, d_buf_1, d_flow_x, d_flow_y);
+                    alg_brox->calc(d_buf_0, d_buf_1, d_flow);
                     break;
                 }
                 default:
@@ -79,11 +82,16 @@ void calcDenseFlowGPU(string file_name, int bound, int type, int step, int dev_i
                 // read frames until end
             }
 
-            //get back flow map
-            d_flow_x.download(flow_x);
-            d_flow_y.download(flow_y);
+            GpuMat planes[2];
+            cuda::split(d_flow, planes);
 
-            vector<uchar> str_x, str_y, str_img;
+            //get back flow map
+            //d_flow_x.download(flow_x);
+            //d_flow_y.download(flow_y);
+            Mat flow_x(planes[0]);
+            Mat flow_y(planes[1]);
+
+            std::vector<uchar> str_x, str_y, str_img;
             encodeFlowMap(flow_x, flow_y, str_x, str_y, bound);
             imencode(".jpg", capture_image, str_img);
 
@@ -107,33 +115,34 @@ void calcDenseFlowGPU(string file_name, int bound, int type, int step, int dev_i
 /**
  * This function use pure GPU backend for video loading and optical flow calculation
  */
-void calcDenseFlowPureGPU(string file_name, int bound, int type, int step, int dev_id,
-                      vector<vector<uchar> >& output_x,
-                      vector<vector<uchar> >& output_y,
-                      vector<vector<uchar> >& output_img){
+void calcDenseFlowPureGPU(std::string file_name, int bound, int type, int step, int dev_id,
+                      std::vector<std::vector<uchar> >& output_x,
+                      std::vector<std::vector<uchar> >& output_y,
+                      std::vector<std::vector<uchar> >& output_img){
 
     setDevice(dev_id);
-    VideoReader_GPU video_stream(file_name);
+    cv::Ptr<cudacodec::VideoReader> video_stream = cudacodec::createVideoReader(file_name);
 //    VideoCapture video_stream(file_name);
-    CHECK(video_stream.isOpened())<<"Cannot open video stream \""
-                                  <<file_name
-                                  <<"\" for optical flow extraction.";
+    //CHECK(video_stream->isOpened())<<"Cannot open video stream \""
+    //                              <<file_name
+    //                              <<"\" for optical flow extraction.";
 
     GpuMat capture_frame, capture_image, prev_image, capture_gray, prev_gray;
     Mat flow_x, flow_y, img;
 
-    GpuMat d_flow_x, d_flow_y;
+    //GpuMat d_flow_x, d_flow_y;
+    GpuMat d_flow;
 
-    FarnebackOpticalFlow alg_farn;
-    OpticalFlowDual_TVL1_GPU alg_tvl1;
-    BroxOpticalFlow alg_brox(0.197f, 50.0f, 0.8f, 10, 77, 10);
+    cv::Ptr<cuda::FarnebackOpticalFlow> alg_farn = cuda::FarnebackOpticalFlow::create();
+    cv::Ptr<cuda::OpticalFlowDual_TVL1> alg_tvl1 = cuda::OpticalFlowDual_TVL1::create();
+    cv::Ptr<cuda::BroxOpticalFlow> alg_brox      = cuda::BroxOpticalFlow::create(0.197f, 50.0f, 0.8f, 10, 77, 10);
 
     bool initialized = false;
     while(true){
 
         //build mats for the first frame
         if (!initialized){
-            bool success = video_stream.read(capture_frame);
+            bool success = video_stream->nextFrame(capture_frame);
             if (!success) break; // read frames until end
             capture_image.create(capture_frame.size(), CV_8UC3);
             capture_gray.create(capture_frame.size(), CV_8UC1);
@@ -146,7 +155,7 @@ void calcDenseFlowPureGPU(string file_name, int bound, int type, int step, int d
             initialized = true;
 
             for (int s = 0; s < step; ++s){
-                video_stream.read(capture_frame);
+                video_stream->nextFrame(capture_frame);
             }
         }else {
             capture_frame.copyTo(capture_image);
@@ -154,18 +163,18 @@ void calcDenseFlowPureGPU(string file_name, int bound, int type, int step, int d
 
             switch(type){
                 case 0: {
-                    alg_farn(prev_gray, capture_gray, d_flow_x, d_flow_y);
+                    alg_farn->calc(prev_gray, capture_gray, d_flow);
                     break;
                 }
                 case 1: {
-                    alg_tvl1(prev_gray, capture_gray, d_flow_x, d_flow_y);
+                    alg_tvl1->calc(prev_gray, capture_gray, d_flow);
                     break;
                 }
                 case 2: {
                     GpuMat d_buf_0, d_buf_1;
                     prev_gray.convertTo(d_buf_0, CV_32F, 1.0 / 255.0);
                     capture_gray.convertTo(d_buf_1, CV_32F, 1.0 / 255.0);
-                    alg_brox(d_buf_0, d_buf_1, d_flow_x, d_flow_y);
+                    alg_brox->calc(d_buf_0, d_buf_1, d_flow);
                     break;
                 }
                 default:
@@ -173,15 +182,20 @@ void calcDenseFlowPureGPU(string file_name, int bound, int type, int step, int d
             }
 
             for (int s = 0; s < step; ++s){
-                if (!video_stream.read(capture_frame)) break;
+                if (!video_stream->nextFrame(capture_frame)) break;
             }
 
+            GpuMat planes[2];
+            cuda::split(d_flow, planes);
+
             //get back flow map
-            d_flow_x.download(flow_x);
-            d_flow_y.download(flow_y);
+            Mat flow_x(planes[0]);
+            Mat flow_y(planes[1]);
+            //d_flow_x.download(flow_x);
+            //d_flow_y.download(flow_y);
             capture_image.download(img);
 
-            vector<uchar> str_x, str_y, str_img;
+            std::vector<uchar> str_x, str_y, str_img;
             encodeFlowMap(flow_x, flow_y, str_x, str_y, bound);
             imencode(".jpg", img, str_img);
 

@@ -17,15 +17,15 @@ int main(int argc, char** argv)
 		};
 
 	CommandLineParser cmd(argc, argv, keys);
-	string vidFile = cmd.get<string>("vidFile");
-	string xFlowFile = cmd.get<string>("xFlowFile");
-	string yFlowFile = cmd.get<string>("yFlowFile");
-	string imgFile = cmd.get<string>("imgFile");
-	string output_style = cmd.get<string>("out");
+	std::string vidFile = cmd.get<std::string>("vidFile");
+	std::string xFlowFile = cmd.get<std::string>("xFlowFile");
+	std::string yFlowFile = cmd.get<std::string>("yFlowFile");
+	std::string imgFile = cmd.get<std::string>("imgFile");
+	std::string output_style = cmd.get<std::string>("out");
 	int bound = cmd.get<int>("bound");
 
 //	LOG(INFO)<<"Starting extraction";
-	vector<vector<uchar> > out_vec_x, out_vec_y, out_vec_img;
+	std::vector<std::vector<uchar> > out_vec_x, out_vec_y, out_vec_img;
 
 	calcDenseFlow(vidFile, bound, 0, 1,
 					 out_vec_x, out_vec_y, out_vec_img);

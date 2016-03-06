@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "zip.h"
 
-void writeZipFile(vector<vector<uchar> >& data, string name_temp, string archive_name){
+void writeZipFile(std::vector<std::vector<uchar> >& data, std::string name_temp, std::string archive_name){
     int err=0;
 #ifdef USE_OBSEL_LIBZIP
     struct zip* archive = zip_open(archive_name.c_str(), ZIP_CREATE, &err);

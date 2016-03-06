@@ -30,7 +30,7 @@ void drawOptFlowMap(const Mat& flow, Mat& cflowmap, int step,double, const Scala
 }
 
 void encodeFlowMap(const Mat& flow_map_x, const Mat& flow_map_y,
-                   vector<uchar>& encoded_x, vector<uchar>& encoded_y,
+                   std::vector<uchar>& encoded_x, std::vector<uchar>& encoded_y,
                    int bound){
     Mat flow_img_x(flow_map_x.size(), CV_8UC1);
     Mat flow_img_y(flow_map_y.size(), CV_8UC1);
@@ -42,7 +42,7 @@ void encodeFlowMap(const Mat& flow_map_x, const Mat& flow_map_y,
     imencode(".jpg", flow_img_y, encoded_y);
 }
 
-void writeImages(vector<vector<uchar>> images, string name_temp){
+void writeImages(std::vector<std::vector<uchar>> images, std::string name_temp){
     for (int i = 0; i < images.size(); ++i){
         char tmp[256];
         sprintf(tmp, "_%05d.jpg", i+1);

@@ -3,10 +3,10 @@
 //
 #include "common.h"
 
-void calcDenseFlow(string file_name, int bound, int type, int step,
-                   vector<vector<uchar> >& output_x,
-                   vector<vector<uchar> >& output_y,
-                   vector<vector<uchar> >& output_img){
+void calcDenseFlow(std::string file_name, int bound, int type, int step,
+                   std::vector<std::vector<uchar> >& output_x,
+                   std::vector<std::vector<uchar> >& output_y,
+                   std::vector<std::vector<uchar> >& output_img){
 
     VideoCapture video_stream(file_name);
     CHECK(video_stream.isOpened())<<"Cannot open video stream \""
@@ -37,7 +37,7 @@ void calcDenseFlow(string file_name, int bound, int type, int step,
                                      0.702, 5, 10, 2, 7, 1.5,
                                      cv::OPTFLOW_FARNEBACK_GAUSSIAN );
 
-            vector<uchar> str_x, str_y, str_img;
+            std::vector<uchar> str_x, str_y, str_img;
             split(flow, flow_split);
             encodeFlowMap(flow_split[0], flow_split[0], str_x, str_y, bound);
             imencode(".jpg", capture_image, str_img);
