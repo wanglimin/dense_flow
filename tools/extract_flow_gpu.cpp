@@ -9,15 +9,15 @@ int main(int argc, char** argv){
 	// IO operation
 	const char* keys =
 		{
-			"{ f  | vidFile      | ex2.avi | filename of video }"
-			"{ x  | xFlowFile    | flow_x | filename of flow x component }"
-			"{ y  | yFlowFile    | flow_y | filename of flow x component }"
-			"{ i  | imgFile      | flow_i | filename of flow image}"
-			"{ b  | bound | 15 | specify the maximum of optical flow}"
-			"{ t  | type | 0 | specify the optical flow algorithm }"
-			"{ d  | device_id    | 0  | set gpu id}"
-			"{ s  | step  | 1 | specify the step for frame sampling}"
-			"{ o  | out | zip | output style}"
+			"{ f vidFile   | ex2.avi | filename of video }"
+			"{ x xFlowFile | flow_x  | filename of flow x component }"
+			"{ y yFlowFile | flow_y  | filename of flow x component }"
+			"{ i imgFile   | flow_i  | filename of flow image}"
+			"{ b bound     | 15      | specify the maximum of optical flow}"
+			"{ t type      | 0       | specify the optical flow algorithm }"
+			"{ d device_id | 0       | set gpu id}"
+			"{ s step      | 1       | specify the step for frame sampling}"
+			"{ o out       | zip     | output style}"
 		};
 
 	CommandLineParser cmd(argc, argv, keys);

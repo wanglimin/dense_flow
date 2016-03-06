@@ -8,12 +8,12 @@ int main(int argc, char** argv)
 
 	const char* keys =
 		{
-			"{ f  | vidFile      | ex2.avi | filename of video }"
-			"{ x  | xFlowFile    | flow_x | filename of flow x component }"
-			"{ y  | yFlowFile    | flow_y | filename of flow x component }"
-			"{ i  | imgFile      | flow_i | filename of flow image}"
-			"{ b  | bound | 15 | specify the maximum of optical flow}"
-			"{ o  | out | zip | output style}"
+			"{ f vidFile   | ex2.avi | filename of video            }"
+			"{ x xFlowFile | flow_x  | filename of flow x component }"
+			"{ y yFlowFile | flow_y  | filename of flow x component }"
+			"{ i imgFile   | flow_i  | filename of flow image       }"
+			"{ b bound     | 15      | specify the maximum of optical flow}"
+			"{ o out       | zip     | output style                 }"
 		};
 
 	CommandLineParser cmd(argc, argv, keys);
