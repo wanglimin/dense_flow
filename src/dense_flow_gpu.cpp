@@ -22,7 +22,6 @@ void calcDenseFlowGPU(std::string file_name, int bound, int type, int step, int 
     Mat flow_x, flow_y;
 
     GpuMat d_frame_0, d_frame_1;
-    //GpuMat d_flow_x, d_flow_y;
     GpuMat d_flow;
 
     cv::Ptr<cuda::FarnebackOpticalFlow> alg_farn = cuda::FarnebackOpticalFlow::create();
@@ -86,8 +85,6 @@ void calcDenseFlowGPU(std::string file_name, int bound, int type, int step, int 
             cuda::split(d_flow, planes);
 
             //get back flow map
-            //d_flow_x.download(flow_x);
-            //d_flow_y.download(flow_y);
             Mat flow_x(planes[0]);
             Mat flow_y(planes[1]);
 
@@ -130,7 +127,6 @@ void calcDenseFlowPureGPU(std::string file_name, int bound, int type, int step, 
     GpuMat capture_frame, capture_image, prev_image, capture_gray, prev_gray;
     Mat flow_x, flow_y, img;
 
-    //GpuMat d_flow_x, d_flow_y;
     GpuMat d_flow;
 
     cv::Ptr<cuda::FarnebackOpticalFlow> alg_farn = cuda::FarnebackOpticalFlow::create();
@@ -191,8 +187,6 @@ void calcDenseFlowPureGPU(std::string file_name, int bound, int type, int step, 
             //get back flow map
             Mat flow_x(planes[0]);
             Mat flow_y(planes[1]);
-            //d_flow_x.download(flow_x);
-            //d_flow_y.download(flow_y);
             capture_image.download(img);
 
             std::vector<uchar> str_x, str_y, str_img;
