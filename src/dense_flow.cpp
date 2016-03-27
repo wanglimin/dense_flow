@@ -16,6 +16,7 @@ void calcDenseFlow(std::string file_name, int bound, int type, int step,
     Mat capture_frame, capture_image, prev_image, capture_gray, prev_gray;
     Mat flow, flow_split[2];
 
+    cv::Ptr<cv::DualTVL1OpticalFlow> alg_tvl1 = cv::createOptFlow_DualTVL1();
 
     bool initialized = false;
     for(int iter = 0;; iter++){
@@ -33,9 +34,24 @@ void calcDenseFlow(std::string file_name, int bound, int type, int step,
         }else if(iter % step == 0){
             capture_frame.copyTo(capture_image);
             cvtColor(capture_image, capture_gray, CV_BGR2GRAY);
-            calcOpticalFlowFarneback(prev_gray, capture_gray, flow,
-                                     0.702, 5, 10, 2, 7, 1.5,
-                                     cv::OPTFLOW_FARNEBACK_GAUSSIAN );
+
+            switch(type){
+                case 0: {
+                    calcOpticalFlowFarneback(prev_gray, capture_gray, flow,
+                                             0.702, 5, 10, 2, 7, 1.5,
+                                             cv::OPTFLOW_FARNEBACK_GAUSSIAN );
+                    break;
+                }
+                case 1: {
+                    alg_tvl1->calc(prev_gray, capture_gray, flow);
+                    break;
+                }
+                default:
+                    LOG(WARNING)<<"Unknown optical method. Using Farneback";
+                    calcOpticalFlowFarneback(prev_gray, capture_gray, flow,
+                                             0.702, 5, 10, 2, 7, 1.5,
+                                             cv::OPTFLOW_FARNEBACK_GAUSSIAN );
+            }
 
             std::vector<uchar> str_x, str_y, str_img;
             split(flow, flow_split);

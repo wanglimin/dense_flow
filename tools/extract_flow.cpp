@@ -13,6 +13,7 @@ int main(int argc, char** argv)
 			"{ y yFlowFile | flow_y  | filename of flow x component }"
 			"{ i imgFile   | flow_i  | filename of flow image       }"
 			"{ b bound     | 15      | specify the maximum of optical flow}"
+			"{ t type      | 0       | specify the optical flow algorithm }"
 			"{ o out       | zip     | output style                 }"
 		};
 
@@ -23,11 +24,12 @@ int main(int argc, char** argv)
 	std::string imgFile = cmd.get<std::string>("imgFile");
 	std::string output_style = cmd.get<std::string>("out");
 	int bound = cmd.get<int>("bound");
+    int type  = cmd.get<int>("type");
 
 //	LOG(INFO)<<"Starting extraction";
 	std::vector<std::vector<uchar> > out_vec_x, out_vec_y, out_vec_img;
 
-	calcDenseFlow(vidFile, bound, 0, 1,
+	calcDenseFlow(vidFile, bound, type, 1,
 					 out_vec_x, out_vec_y, out_vec_img);
 
 	if (output_style == "dir") {
