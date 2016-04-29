@@ -53,9 +53,9 @@ int main(int argc, char** argv){
 	string yFlowFile = cmd.get<string>("yFlowFile");
 	string imgFile = cmd.get<string>("imgFile");
 	int bound = cmd.get<int>("bound");
-    int type  = cmd.get<int>("type");
-    int device_id = cmd.get<int>("device_id");
-    int step = cmd.get<int>("step");
+        int type  = cmd.get<int>("type");
+        int device_id = cmd.get<int>("device_id");
+        int step = cmd.get<int>("step");
 
 	VideoCapture capture(vidFile);
 	if(!capture.isOpened()) {
@@ -98,7 +98,9 @@ int main(int argc, char** argv){
 		frame.copyTo(image);
 		cvtColor(image, grey, CV_BGR2GRAY);
 
-
+               //  Mat prev_grey_, grey_;
+               //  resize(prev_grey, prev_grey_, Size(453, 342));
+               //  resize(grey, grey_, Size(453, 342));
 		frame_0.upload(prev_grey);
 		frame_1.upload(grey);
 
@@ -127,16 +129,16 @@ int main(int argc, char** argv){
 		Mat imgY(flow_y.size(),CV_8UC1);
 		convertFlowToImage(flow_x,flow_y, imgX, imgY, -bound, bound);
 		char tmp[20];
-		sprintf(tmp,"_%04d.jpg",int(frame_num));
+		sprintf(tmp,"_%05d.jpg",int(frame_num));
 
-		Mat imgX_, imgY_, image_;
-		resize(imgX,imgX_,cv::Size(340,256));
-		resize(imgY,imgY_,cv::Size(340,256));
-		resize(image,image_,cv::Size(340,256));
+		// Mat imgX_, imgY_, image_;
+		// resize(imgX,imgX_,cv::Size(340,256));
+		// resize(imgY,imgY_,cv::Size(340,256));
+		// resize(image,image_,cv::Size(340,256));
 
-		imwrite(xFlowFile + tmp,imgX_);
-		imwrite(yFlowFile + tmp,imgY_);
-		imwrite(imgFile + tmp, image_);
+		imwrite(xFlowFile + tmp,imgX);
+		imwrite(yFlowFile + tmp,imgY);
+		imwrite(imgFile + tmp, image);
 
 		std::swap(prev_grey, grey);
 		std::swap(prev_image, image);
