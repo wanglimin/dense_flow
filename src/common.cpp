@@ -49,7 +49,7 @@ void encodeFlowMap(const Mat& flow_map_x, const Mat& flow_map_y,
     }
 }
 
-void writeImages(vector<vector<uchar>> images, string name_temp){
+void writeImages(std::vector<std::vector<uchar>> images, std::string name_temp){
     for (int i = 0; i < images.size(); ++i){
         char tmp[256];
         sprintf(tmp, "_%05d.jpg", i+1);

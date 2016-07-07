@@ -8,19 +8,19 @@
 #include "common.h"
 #include "easylogging++.h"
 
-void calcDenseFlow(string file_name, int bound, int type, int step,
-                   vector<vector<uchar> >& output_x,
-                   vector<vector<uchar> >& output_y,
-                   vector<vector<uchar> >& output_img);
-void calcDenseFlowGPU(string file_name, int bound, int type, int step, int dev_id,
-                      vector<vector<uchar> >& output_x,
-                      vector<vector<uchar> >& output_y,
-                      vector<vector<uchar> >& output_img);
+void calcDenseFlow(std::string file_name, int bound, int type, int step,
+                   std::vector<std::vector<uchar> >& output_x,
+                   std::vector<std::vector<uchar> >& output_y,
+                   std::vector<std::vector<uchar> >& output_img);
+void calcDenseFlowGPU(std::string file_name, int bound, int type, int step, int dev_id,
+                      std::vector<std::vector<uchar> >& output_x,
+                      std::vector<std::vector<uchar> >& output_y,
+                      std::vector<std::vector<uchar> >& output_img);
 
-void calcDenseFlowPureGPU(string file_name, int bound, int type, int step, int dev_id,
-                      vector<vector<uchar> >& output_x,
-                      vector<vector<uchar> >& output_y,
-                      vector<vector<uchar> >& output_img);
+void calcDenseFlowPureGPU(std::string file_name, int bound, int type, int step, int dev_id,
+                      std::vector<std::vector<uchar> >& output_x,
+                      std::vector<std::vector<uchar> >& output_y,
+                      std::vector<std::vector<uchar> >& output_img);
 
 void calcDenseWarpFlowGPU(string file_name, int bound, int type, int step, int dev_id,
                           vector<vector<uchar> >& output_x,
