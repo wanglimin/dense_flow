@@ -5,6 +5,7 @@
 #include "opencv2/cudaarithm.hpp"
 #include "opencv2/cudaoptflow.hpp"
 #include "opencv2/cudacodec.hpp"
+#include "easylogging++.h"
 using namespace cv::cuda;
 
 

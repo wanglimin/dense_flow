@@ -30,7 +30,7 @@ void drawOptFlowMap(const Mat& flow, Mat& cflowmap, int step,double, const Scala
 }
 
 void encodeFlowMap(const Mat& flow_map_x, const Mat& flow_map_y,
-                   vector<uchar>& encoded_x, vector<uchar>& encoded_y,
+                   std::vector<uchar>& encoded_x, std::vector<uchar>& encoded_y,
                    int bound, bool to_jpg){
     Mat flow_img_x(flow_map_x.size(), CV_8UC1);
     Mat flow_img_y(flow_map_y.size(), CV_8UC1);
