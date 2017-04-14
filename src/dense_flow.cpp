@@ -56,7 +56,7 @@ void calcDenseFlow(std::string file_name, int bound, int type, int step,
 
             std::vector<uchar> str_x, str_y, str_img;
             split(flow, flow_split);
-            encodeFlowMap(flow_split[0], flow_split[0], str_x, str_y, bound);
+            encodeFlowMap(flow_split[0], flow_split[1], str_x, str_y, bound);
             imencode(".jpg", capture_image, str_img);
 
             output_x.push_back(str_x);
