@@ -1,3 +1,7 @@
+**Please Note**: This repository is no longer maintained. For extracting optical flow from videos please use [this latest tool](https://github.com/open-mmlab/denseflow) from Open-MMLAB.
+----
+
+
 Extracting dense flow field given a video.
 
 #### Dependencies:
